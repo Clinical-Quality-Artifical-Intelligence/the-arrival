@@ -5620,7 +5620,7 @@ function Ah() {
   let g = nn(dt, t * 4.2, .045); g.position.copy(s.position).add(new P(.6, .4, -2)); n.add(g); n.add(En(760));
   return {
     scene: n, camera: e, update(_) {
-      let tx = isPort ? 0 : 2.85, ty = isPort ? -1.45 : -.05;
+      let tx = isPort ? 0 : 2.85, ty = isPort ? -1.95 : -.05;
       s.position.set(tx, ty, 0); orb1.position.copy(s.position); orb2.position.copy(s.position);
       atm.position.set(tx, ty, -.3); p.position.copy(s.position); g.position.set(tx + .6, ty + .4, -2);
       s.rotation.y = _.t * .075 + 1.2; orb1.rotation.z = _.t * .11; orb2.rotation.z = -_.t * .08;
@@ -6024,17 +6024,18 @@ var Zt = [
       let mx = isPort ? 64 : 88, mw = isPort ? 952 : 1140;
       if (isPort) {
         ce(n, e, .25, (o) => {
-          Xe(n, "TRANSMISSION 001 //", mx, 196, V.teal, 24, 3, o);
-          Xe(n, "NURSING CITIZEN DEVELOPMENT", mx, 234, V.teal, 24, 3, o);
+          Xe(n, "TRANSMISSION 001 //", mx, 178, V.teal, 24, 3, o);
+          Xe(n, "NURSING CITIZEN DEVELOPMENT", mx, 216, V.teal, 24, 3, o);
         }, { rise: 14 });
-        drawRule(n, mx, 256, 720, (e - .3) / .8, "rgba(61,232,212,0.35)");
-        riseHeadline(n, "The", mx - 6, 434, 174, mw, V.ink, Ct((e - .48) / .82), { weight: 800 });
-        let arr = riseHeadline(n, "Arrival", mx - 6, 616, 174, mw, V.teal, Ct((e - .72) / .88), { weight: 800, glow: V.teal });
+        drawRule(n, mx, 238, 720, (e - .3) / .8, "rgba(61,232,212,0.35)");
+        riseHeadline(n, "The", mx - 6, 404, 168, mw, V.ink, Ct((e - .48) / .82), { weight: 800 });
+        let arr = riseHeadline(n, "Arrival", mx - 6, 578, 168, mw, V.teal, Ct((e - .72) / .88), { weight: 800, glow: V.teal });
         drawSelectBox(n, arr.box[0] - 14, arr.box[1] - 8, arr.box[2] + 28, arr.box[3] + 14, (e - 1.15) / .55, { color: V.select, time: e });
-        ce(n, e, 1.38, () => { yn(n, 45, 500); ft(n, "The future of nursing won’t be adopted. It will be built — *by nurses*, at a scale no one has planned for.", mx, 758, mw, 62, V.dim); }, { rise: 22 });
+        ce(n, e, 1.38, () => { yn(n, 43, 500); ft(n, "The future of nursing won’t be adopted. It will be built — *by nurses*, at a scale no one has planned for.", mx, 712, mw, 58, V.dim); }, { rise: 22 });
         ce(n, e, 1.78, (o) => {
-          Xe(n, "LINCOLN GOMBEDZA · FOUNDER", mx, 1044, V.mute, 22, 2.5, o);
-          Xe(n, "NURSING CITIZEN DEVELOPMENT", mx, 1080, V.mute, 22, 2.5, o);
+          Gn(n, mx - 18, 944, 676, 98, { fill: "rgba(6,11,28,0.78)", r: 12 });
+          Xe(n, "LINCOLN GOMBEDZA · FOUNDER", mx + 4, 984, V.ink, 21, 2.5, o);
+          Xe(n, "NURSING CITIZEN DEVELOPMENT", mx + 4, 1020, V.teal, 20, 2.5, o);
         }, { rise: 14 });
       } else {
         ce(n, e, .25, (o) => Xe(n, "TRANSMISSION 001 // NURSING CITIZEN DEVELOPMENT", mx, 206, V.teal, 22, 3.8, o), { rise: 14 });
@@ -6052,11 +6053,11 @@ var Zt = [
     notes: "Pause on the first line. Systems were bought, configured and rolled out — nurses were trained on them, rarely asked, almost never in charge. Click to reveal the second line. That inversion is the whole talk.",
     draw(n, e) {
       let { t } = e, mx = isPort ? 64 : 88, mw = isPort ? 952 : 1744;
-      ce(n, t, .18, (o) => Xe(n, "SIGNAL DETECTED // THE INFLECTION POINT", mx, isPort ? 280 : 230, V.teal, isPort ? 25 : 22, 3.2, o), { rise: 14 });
-      Lt(n, "For a century, technology was done _to_ nurses.", mx, isPort ? 426 : 368, isPort ? 98 : 112, mw, V.ink, Ct((t - .38) / .95));
+      ce(n, t, .18, (o) => Xe(n, "SIGNAL DETECTED // THE INFLECTION POINT", mx, isPort ? 260 : 230, V.teal, isPort ? 25 : 22, 3.2, o), { rise: 14 });
+      let h1 = Lt(n, "For a century, technology was done _to_ nurses.", mx, isPort ? 404 : 368, isPort ? 92 : 108, mw, V.ink, Ct((t - .38) / .95));
       if (e.step >= 1) {
-        let s1 = e.since(1);
-        let h2 = Lt(n, "Now it’s built *by* them.", mx, isPort ? 1020 : 696, isPort ? 106 : 116, mw, V.ink, Ct(s1 / .85));
+        let s1 = e.since(1), y2 = Math.max(isPort ? 1020 : 696, h1.endY + (isPort ? 110 : 76));
+        let h2 = Lt(n, "Now it’s built *by* them.", mx, y2, isPort ? 102 : 114, mw, V.ink, Ct(s1 / .85));
         drawSelectBox(n, h2.box[0] - 16, h2.box[1] - 10, h2.box[2] + 32, h2.box[3] + 18, (s1 - .22) / .52, { color: V.teal, time: t });
       }
       Yt(n, "NCD // 01 · ARRIVAL", "02", t);
@@ -6067,40 +6068,45 @@ var Zt = [
     notes: "Sources: WHO State of the World’s Nursing 2025 reports 29.8 million nurses (2023 data). NMC register reached a record 867,935 in March 2026. Gartner forecast that by 2026 at least 80% of low-code tool users would be outside formal IT. The 1% figure is simple arithmetic, not a forecast. The point: scale changes the category. This isn’t a niche hobby, it’s a workforce.\n\nAsk the room for their estimate first, then click to reveal the answer.",
     draw(n, e) {
       let { t } = e, mx = isPort ? 64 : 88, mw = isPort ? 952 : 1744;
-      ce(n, t, .1, (o) => Xe(n, "THE LARGEST CLINICAL WORKFORCE ON EARTH", mx, isPort ? 126 : 108, V.teal, isPort ? 24 : 22, 3, o));
-      Lt(n, "What if they could all build?", mx, isPort ? 222 : 202, isPort ? 80 : 84, mw, V.ink, Ct((t - .24) / .85));
+      ce(n, t, .1, (o) => Xe(n, "THE LARGEST CLINICAL WORKFORCE ON EARTH", mx, isPort ? 124 : 108, V.teal, isPort ? 24 : 22, 3, o));
+      let hl = Lt(n, "What if they could all build?", mx, isPort ? 216 : 202, isPort ? 74 : 84, mw, V.ink, Ct((t - .24) / .85));
       let cards = [
         { n: s => `${s.toFixed(1)}M`, to: 29.8, label: "nurses worldwide", src: "WHO · STATE OF THE WORLD’S NURSING 2025" },
         { n: s => `${Math.round(s)}K`, to: 868, label: "nurses, midwives and nursing associates on the UK register", src: "NMC REGISTER · MARCH 2026" },
         { n: s => `${Math.round(s)}%`, to: 80, label: "of low-code platform users now sit outside formal IT", src: "GARTNER FORECAST FOR 2026" }
       ];
       if (isPort) {
+        let baseCardY = Math.max(404, hl.endY + 14);
         cards.forEach((s, r) => {
           let cp = Ct((t - (.65 + r * .22)) / .65);
           if (cp <= 0) return;
-          let sp = bt.outBack(cp, 1.55), cy = 396 + r * 296;
+          let sp = bt.outBack(cp, 1.55), cy = baseCardY + r * 294;
           n.save(); n.globalAlpha *= bt.out2(cp * 1.4); n.translate(0, (1 - sp) * -32);
-          Gn(n, mx, cy, mw, 272, { accent: r === 0 ? V.teal : null, glow: .5 });
-          Ue(n, 800, 108, Ce.title); n.letterSpacing = "-2px"; n.fillStyle = V.teal;
-          n.fillText(s.n(E0(t, .82 + r * .22, 1.65, s.to)), mx + 32, cy + 158);
-          n.letterSpacing = "0px"; yn(n, 34, 500);
-          let o = ft(n, s.label, mx + 368, cy + 78, 548, 44, V.ink);
-          Ue(n, 600, 19, Ce.mono); n.letterSpacing = "2px"; ft(n, s.src, mx + 368, Math.max(o + 18, cy + 196), 548, 26, V.teal); n.letterSpacing = "0px";
+          Gn(n, mx, cy, mw, 270, { accent: r === 0 ? V.teal : null, glow: .5 });
+          Ue(n, 800, 86, Ce.title); n.letterSpacing = "-2px"; n.fillStyle = V.teal;
+          let maxStatW = n.measureText(s.n(s.to)).width;
+          n.fillText(s.n(E0(t, .82 + r * .22, 1.65, s.to)), mx + 30, cy + 156);
+          n.letterSpacing = "0px";
+          let textX = Math.max(mx + 392, mx + 30 + maxStatW + 34), textW = mx + mw - textX - 28;
+          yn(n, 32, 500);
+          let o = ft(n, s.label, textX, cy + 76, textW, 42, V.ink);
+          Ue(n, 600, 18, Ce.mono); n.letterSpacing = "1.8px"; ft(n, s.src, textX, Math.max(o + 14, cy + 196), textW, 25, V.teal); n.letterSpacing = "0px";
           n.restore();
         });
+        let estY = baseCardY + 3 * 294 + 42, box1Y = estY + 86;
         ce(n, t, 1.55, () => {
           Ue(n, 700, 22, Ce.mono); n.letterSpacing = "2px";
-          ft(n, "~YOUR ESTIMATE // IF 1 IN 100 NURSES BUILT A TOOL, HOW MANY TOOLS WOULD THAT BE?~", mx, 1334, mw, 32, V.violet);
+          ft(n, "~YOUR ESTIMATE // IF 1 IN 100 NURSES BUILT A TOOL, HOW MANY TOOLS WOULD THAT BE?~", mx, estY, mw, 32, V.violet);
           n.letterSpacing = "0px";
         });
-        let r0 = [mx, 396, mw, 272], r1 = [mx, 1428, mw, 316];
+        let r0 = [mx, baseCardY, mw, 270], r1 = [mx, box1Y, mw, 310];
         if (e.step >= 1) {
           let s1 = e.since(1);
           ce(n, s1, 0, () => {
-            Gn(n, mx, 1428, mw, 316, { fill: V.cardHi });
-            n.fillStyle = V.teal; n.fillRect(mx, 1428, 7, 316);
+            Gn(n, mx, box1Y, mw, 310, { fill: V.cardHi });
+            n.fillStyle = V.teal; n.fillRect(mx, box1Y, 7, 310);
             Ue(n, 600, 38, Ce.body);
-            ft(n, "If just *1%* of the world’s nurses built one tool each, that’s *298,000 builders* — larger than many national IT workforces.", mx + 38, 1500, mw - 72, 52, V.ink);
+            ft(n, "If just *1%* of the world’s nurses built one tool each, that’s *298,000 builders* — larger than many national IT workforces.", mx + 38, box1Y + 72, mw - 72, 52, V.ink);
           }, { ease: bt.outBack, rise: 28 });
           let mr = lerpRect(r0, r1, s1 / .55);
           drawSelectBox(n, mr[0], mr[1], mr[2], mr[3], 1, { color: V.teal, knob: false, time: t });
@@ -6287,19 +6293,21 @@ var Zt = [
       let mx = isPort ? 64 : 88;
       if (isPort) {
         ce(n, e, .1, (o) => Xe(n, "DEFINITION // 2030s", mx, 120, V.teal, 25, 3.5, o));
-        Lt(n, "Agentic nursing", mx, 218, 88, 952, V.ink, Ct((e - .24) / .85));
-        ce(n, e, .65, () => { yn(n, 40, 500); ft(n, "Nurses won’t just use AI. They’ll lead a *workforce of it* — setting goals, granting permissions, checking the work and owning the outcome.", mx, 330, 952, 56, V.dim); });
-        drawRule(n, mx, 604, 820, (e - .95) / .7, "rgba(61,232,212,0.35)");
-        ce(n, e, 1.15, (o) => Xe(n, "DELEGATE → SUPERVISE → VERIFY → OWN", mx, 654, V.teal, 23, 2.5, o));
-        ce(n, e, 1.45, () => { yn(n, 34, 500); ft(n, "The same accountability as delegating to a colleague. A very different scale.", mx, 718, 952, 46, V.dim); });
-        drawAgentOrbit(n, 540, 1320, 265, e, (e - .55) / .8);
+        let hl = Lt(n, "Agentic nursing", mx, 214, 80, 952, V.ink, Ct((e - .24) / .85));
+        let bY = Math.max(324, hl.endY + 18);
+        ce(n, e, .65, () => { yn(n, 40, 500); ft(n, "Nurses won’t just use AI. They’ll lead a *workforce of it* — setting goals, granting permissions, checking the work and owning the outcome.", mx, bY, 952, 56, V.dim); });
+        drawRule(n, mx, bY + 268, 820, (e - .95) / .7, "rgba(61,232,212,0.35)");
+        ce(n, e, 1.15, (o) => Xe(n, "DELEGATE → SUPERVISE → VERIFY → OWN", mx, bY + 318, V.teal, 23, 2.5, o));
+        ce(n, e, 1.45, () => { yn(n, 34, 500); ft(n, "The same accountability as delegating to a colleague. A very different scale.", mx, bY + 382, 952, 46, V.dim); });
+        drawAgentOrbit(n, 540, 1330, 260, e, (e - .55) / .8);
       } else {
         ce(n, e, .1, (o) => Xe(n, "DEFINITION // 2030s", mx, 108, V.teal, 22, 3.5, o));
-        Lt(n, "Agentic nursing", mx, 206, 88, 860, V.ink, Ct((e - .24) / .85));
-        ce(n, e, .65, () => { yn(n, 37, 500); ft(n, "Nurses won’t just use AI. They’ll lead a *workforce of it* — setting goals, granting permissions, checking the work and owning the outcome.", mx, 314, 810, 52, V.dim); });
-        drawRule(n, mx, 594, 740, (e - .95) / .7, "rgba(61,232,212,0.35)");
-        ce(n, e, 1.15, (o) => Xe(n, "DELEGATE → SUPERVISE → VERIFY → OWN", mx, 644, V.teal, 22, 3, o));
-        ce(n, e, 1.45, () => { yn(n, 31, 500); ft(n, "The same accountability as delegating to a colleague. A very different scale.", mx, 712, 790, 44, V.dim); });
+        let hl = Lt(n, "Agentic nursing", mx, 202, 80, 920, V.ink, Ct((e - .24) / .85));
+        let bY = Math.max(310, hl.endY + 18);
+        ce(n, e, .65, () => { yn(n, 37, 500); ft(n, "Nurses won’t just use AI. They’ll lead a *workforce of it* — setting goals, granting permissions, checking the work and owning the outcome.", mx, bY, 810, 52, V.dim); });
+        drawRule(n, mx, bY + 276, 740, (e - .95) / .7, "rgba(61,232,212,0.35)");
+        ce(n, e, 1.15, (o) => Xe(n, "DELEGATE → SUPERVISE → VERIFY → OWN", mx, bY + 326, V.teal, 22, 3, o));
+        ce(n, e, 1.45, () => { yn(n, 31, 500); ft(n, "The same accountability as delegating to a colleague. A very different scale.", mx, bY + 394, 790, 44, V.dim); });
         drawAgentOrbit(n, 1410, 552, 248, e, (e - .55) / .8);
       }
       Yt(n, "NCD // 03 · AGENTIC NURSING", "07", e);
@@ -6328,17 +6336,19 @@ var Zt = [
       let i, s, r, o, rowH, fSz, actorX, msgX;
       if (isPort) {
         ce(n, e, .1, (k) => Xe(n, "SPECULATIVE SCENARIO", mx, 114, V.teal, 24, 3, k));
-        Lt(n, "A Tuesday in 2034", mx, 206, 82, 952, V.ink, Ct((e - .24) / .85));
-        ce(n, e, .68, () => { yn(n, 35, 500); ft(n, "Between medication rounds, a staff nurse describes a problem in plain English. By lunchtime it’s a safety-assured agent. By midnight it’s *protecting patients in 41 trusts*.", mx, 298, 952, 48, V.dim); });
-        ce(n, e, 1.08, (k) => Xe(n, "ONE NURSE · ONE IDEA · ONE SHIFT", mx, 548, V.teal, 22, 2.5, k));
-        i = 48; s = 594; r = 984; o = 948; rowH = 64; fSz = 21; actorX = i + 108; msgX = i + 318;
-        ce(n, e, 1.48, (k) => Xs(n, "PAUSE THE CLOCK  //  BEFORE MIDNIGHT", "You lead the second trust. What would you need to see before saying yes to this tool?", mx, 1598, 952, k));
+        let hl = Lt(n, "A Tuesday in 2034", mx, 202, 74, 952, V.ink, Ct((e - .24) / .85));
+        let bY = Math.max(296, hl.endY + 14);
+        ce(n, e, .68, () => { yn(n, 34, 500); ft(n, "Between medication rounds, a staff nurse describes a problem in plain English. By lunchtime it’s a safety-assured agent. By midnight it’s *protecting patients in 41 trusts*.", mx, bY, 952, 46, V.dim); });
+        ce(n, e, 1.08, (k) => Xe(n, "ONE NURSE · ONE IDEA · ONE SHIFT", mx, bY + 240, V.teal, 22, 2.5, k));
+        i = 48; s = bY + 284; r = 984; o = 948; rowH = 64; fSz = 21; actorX = i + 108; msgX = i + 318;
+        ce(n, e, 1.48, (k) => Xs(n, "PAUSE THE CLOCK  //  BEFORE MIDNIGHT", "You lead the second trust. What would you need to see before saying yes to this tool?", mx, s + o + 52, 952, k));
       } else {
-        ce(n, e, .1, (k) => Xe(n, "SPECULATIVE SCENARIO", mx, 108, V.teal, 22, 3.5, k));
-        Lt(n, "A Tuesday in 2034", mx, 204, 82, 730, V.ink, Ct((e - .24) / .85));
-        ce(n, e, .68, () => { yn(n, 33, 500); ft(n, "Between medication rounds, a staff nurse describes a problem in plain English. By lunchtime it’s a safety-assured agent. By midnight it’s *protecting patients in 41 trusts*.", mx, 316, 720, 47, V.dim); });
-        ce(n, e, 1.08, (k) => Xe(n, "ONE NURSE · ONE IDEA · ONE SHIFT", mx, 608, V.teal, 20, 3, k));
-        ce(n, e, 1.48, (k) => Xs(n, "PAUSE THE CLOCK  //  BEFORE MIDNIGHT", "You lead the second trust. What would you need to see before saying yes to this tool?", mx, 690, 720, k));
+        ce(n, e, .1, (k) => Xe(n, "SPECULATIVE SCENARIO", mx, 104, V.teal, 22, 3.5, k));
+        let hl = Lt(n, "A Tuesday in 2034", mx, 194, 68, 730, V.ink, Ct((e - .24) / .85));
+        let bY = Math.max(306, hl.endY + 20);
+        ce(n, e, .68, () => { yn(n, 32, 500); ft(n, "Between medication rounds, a staff nurse describes a problem in plain English. By lunchtime it’s a safety-assured agent. By midnight it’s *protecting patients in 41 trusts*.", mx, bY, 720, 45, V.dim); });
+        ce(n, e, 1.08, (k) => Xe(n, "ONE NURSE · ONE IDEA · ONE SHIFT", mx, bY + 266, V.teal, 20, 3, k));
+        ce(n, e, 1.48, (k) => Xs(n, "PAUSE THE CLOCK  //  BEFORE MIDNIGHT", "You lead the second trust. What would you need to see before saying yes to this tool?", mx, bY + 340, 720, k));
         i = 840; s = 116; r = 1004; o = 840; rowH = 56; fSz = 20.5; actorX = i + 108; msgX = i + 314;
       }
       ce(n, e, .85, () => {
@@ -6431,19 +6441,19 @@ var Zt = [
         ce(n, u, 0, () => {
           if (isPort) {
             let portPos = [
-              [96, 1460, "left"],
-              [96, 1245, "left"],
-              [96, 1020, "left"],
-              [984, 790, "right"],
-              [900, 446, "right"]
+              [96, 1438, "left"],
+              [96, 1218, "left"],
+              [96, 994, "left"],
+              [640, 756, "right"],
+              [890, 430, "right"]
             ][h];
-            let [mxP, myP, aln] = portPos, isR = aln === "right";
+            let [mxP, myP, aln] = portPos;
             n.textAlign = aln;
             Xe(n, String(r), mxP, myP + 22, h === 4 ? V.violet : V.teal, 23, 3);
             Ue(n, 700, 38, Ce.title); n.fillStyle = V.ink; n.fillText(o, mxP, myP + 66);
-            yn(n, 29, 500); ft(n, a, mxP, myP + 104, 470, 38, V.dim, aln);
+            yn(n, 29, 500); ft(n, a, mxP, myP + 104, 460, 38, V.dim, aln);
             n.textAlign = "left";
-            if (h === 4) drawSelectBox(n, mxP - 470, myP - 12, 490, 174, (e - 3.45) / .5, { color: V.select, knob: true, time: e });
+            if (h === 4) drawSelectBox(n, mxP - 466, myP - 12, 486, 174, (e - 3.45) / .5, { color: V.select, knob: true, time: e });
           } else {
             let _ = l !== "L", m = l === "L" ? p - 6 : l === "R" ? p - 32 : p - 96, f = l === "R2" ? g - 16 : g + c - 128;
             n.textAlign = _ ? "right" : "left";
@@ -6465,10 +6475,11 @@ var Zt = [
       let mx = isPort ? 64 : 88;
       if (isPort) {
         ce(n, e, .1, (o) => Xe(n, "THE NURSING COMMONS", mx, 124, V.teal, 25, 3.5, o));
-        Lt(n, "An app store with a duty of care.", mx, 224, 84, 952, V.ink, Ct((e - .24) / .88));
-        ce(n, e, .78, () => { yn(n, 40, 500); ft(n, "Every tool a nurse builds — assured, credited and free to adapt. The best idea on a ward in Stoke protects a patient in São Paulo *by Friday*.", mx, 468, 952, 56, V.dim); });
-        drawRule(n, mx, 738, 820, (e - 1.0) / .7, "rgba(61,232,212,0.35)");
-        ce(n, e, 1.15, (o) => Xe(n, "OPEN · ASSURED · CREDITED · ADAPTABLE", mx, 790, V.teal, 23, 2.5, o));
+        let hl = Lt(n, "An app store with a duty of care.", mx, 220, 80, 952, V.ink, Ct((e - .24) / .88));
+        let bY = Math.max(468, hl.endY + 20);
+        ce(n, e, .78, () => { yn(n, 40, 500); ft(n, "Every tool a nurse builds — assured, credited and free to adapt. The best idea on a ward in Stoke protects a patient in São Paulo *by Friday*.", mx, bY, 952, 56, V.dim); });
+        drawRule(n, mx, bY + 270, 820, (e - 1.0) / .7, "rgba(61,232,212,0.35)");
+        ce(n, e, 1.15, (o) => Xe(n, "OPEN · ASSURED · CREDITED · ADAPTABLE", mx, bY + 322, V.teal, 23, 2.5, o));
         ce(n, e, .95, () => {
           let t = Math.floor(50571 * bt.out4((e - 1) / 3.8) + Math.max(0, e - 4.8) * 1.6);
           Ue(n, 700, 28, Ce.mono); n.letterSpacing = "3px"; n.textAlign = "center"; n.fillStyle = V.teal;
@@ -6478,10 +6489,11 @@ var Zt = [
         });
       } else {
         ce(n, e, .1, (o) => Xe(n, "THE NURSING COMMONS", mx, 108, V.teal, 22, 3.5, o));
-        Lt(n, "An app store with a duty of care.", mx, 206, 86, 860, V.ink, Ct((e - .24) / .88));
-        ce(n, e, .78, () => { yn(n, 36, 500); ft(n, "Every tool a nurse builds — assured, credited and free to adapt. The best idea on a ward in Stoke protects a patient in São Paulo *by Friday*.", mx, 458, 830, 51, V.dim); });
-        drawRule(n, mx, 694, 740, (e - 1.0) / .7, "rgba(61,232,212,0.35)");
-        ce(n, e, 1.15, (o) => Xe(n, "OPEN · ASSURED · CREDITED · ADAPTABLE", mx, 742, V.teal, 20, 3, o));
+        let hl = Lt(n, "An app store with a duty of care.", mx, 202, 82, 860, V.ink, Ct((e - .24) / .88));
+        let bY = Math.max(454, hl.endY + 20);
+        ce(n, e, .78, () => { yn(n, 36, 500); ft(n, "Every tool a nurse builds — assured, credited and free to adapt. The best idea on a ward in Stoke protects a patient in São Paulo *by Friday*.", mx, bY, 830, 51, V.dim); });
+        drawRule(n, mx, bY + 236, 740, (e - 1.0) / .7, "rgba(61,232,212,0.35)");
+        ce(n, e, 1.15, (o) => Xe(n, "OPEN · ASSURED · CREDITED · ADAPTABLE", mx, bY + 284, V.teal, 20, 3, o));
         ce(n, e, .95, () => {
           let t = Math.floor(50571 * bt.out4((e - 1) / 3.8) + Math.max(0, e - 4.8) * 1.6);
           Ue(n, 700, 23, Ce.mono); n.letterSpacing = "3px"; n.textAlign = "center"; n.fillStyle = V.teal;
@@ -6767,16 +6779,23 @@ var Zt = [
         }
         n.restore();
       }
-      let titleLines = isPort ? ["NURSING CITIZEN", "DEVELOPMENT"] : ["NURSING CITIZEN DEVELOPMENT"];
-      let fSz = isPort ? 76 : 62, gap = isPort ? 6 : 8;
+      let titleLines = isPort ? ["NURSING", "CITIZEN", "DEVELOPMENT"] : ["NURSING CITIZEN DEVELOPMENT"];
+      let fSz = isPort ? 78 : 62, gap = isPort ? 6 : 8, safeMaxW = STAGE_W - (isPort ? 160 : 180);
       Ue(n, 800, fSz, Ce.title); n.letterSpacing = "0px"; n.textAlign = "left";
-      let charIdx = 0, maxW = 0;
-      let rowData = titleLines.map((ln, rIdx) => {
+      let measureRows = () => titleLines.map(ln => {
         let cw = [...ln].map(ch => n.measureText(ch).width + gap);
-        let tw = cw.reduce((acc, w) => acc + w, 0) - gap;
-        maxW = Math.max(maxW, tw);
-        return { ln, cw, tw, y: isPort ? (880 + rIdx * 98) : 558 };
+        return { ln, cw, tw: cw.reduce((acc, w) => acc + w, 0) - gap };
       });
+      let measured = measureRows(), rawMaxW = Math.max(...measured.map(r => r.tw));
+      if (rawMaxW > safeMaxW) {
+        fSz = Math.floor(fSz * (safeMaxW / rawMaxW));
+        Ue(n, 800, fSz, Ce.title);
+        measured = measureRows();
+      }
+      let maxW = Math.max(...measured.map(r => r.tw));
+      let lineStep = Math.round(fSz * 1.26), baseTitleY = isPort ? 790 : 558;
+      let rowData = measured.map((m, rIdx) => ({ ...m, y: baseTitleY + rIdx * lineStep }));
+      let charIdx = 0;
       n.save();
       rowData.forEach(({ ln, cw, tw, y }) => {
         let d = cx - tw / 2;
@@ -6796,7 +6815,7 @@ var Zt = [
         charIdx++;
       });
       n.restore();
-      let boxTop = isPort ? 802 : 482, boxH = isPort ? 204 : 104;
+      let boxTop = baseTitleY - Math.round(fSz * 1.02), boxH = (titleLines.length - 1) * lineStep + Math.round(fSz * 1.38);
       let p = (i - 5.4) / .85;
       if (p > 0 && p < 1) {
         n.save(); n.globalCompositeOperation = "source-atop";
@@ -6807,7 +6826,7 @@ var Zt = [
       n.letterSpacing = "0px";
       let g = bt.out4((i - 6.35) / 1.0);
       if (g > 0) {
-        let subY = isPort ? 1094 : 676;
+        let subY = boxTop + boxH + (isPort ? 96 : 90);
         n.save(); n.globalAlpha *= g; Ue(n, 500, isPort ? 48 : 44, Ce.body); n.letterSpacing = "1px";
         ft(n, "The future is built *by nurses*", cx, subY + (1 - g) * 24, STAGE_W - 120, 56, V.dim, "center"); n.restore();
         drawSelectBox(n, cx - maxW / 2 - 28, boxTop, maxW + 56, boxH, (i - 6.4) / .52, { color: V.select, knob: true, time: e });

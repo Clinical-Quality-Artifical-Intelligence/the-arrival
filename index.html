@@ -47,7 +47,18 @@
   @keyframes sndPulse { 0% { box-shadow: 0 0 0 0 rgba(61,232,212,.55); } 70% { box-shadow: 0 0 0 12px rgba(61,232,212,0); } 100% { box-shadow: 0 0 0 0 rgba(61,232,212,0); } }
   #soundPrompt { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 15; padding: 10px 22px; border: 1px solid rgba(61,232,212,.75); border-radius: 999px; background: rgba(6,10,24,.92); color: #3DE8D4; font: 600 13px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 2.2px; cursor: pointer; box-shadow: 0 0 26px rgba(61,232,212,.25); transition: opacity .35s, transform .2s; }
   #soundPrompt:hover { transform: translateX(-50%) scale(1.03); background: rgba(14,32,58,.95); }
-  #soundPrompt[hidden] { display: none; }
+  #soundPrompt[hidden], #cinemaGate[hidden] { display: none; }
+  #cinemaGate { position: fixed; inset: 0; z-index: 14; display: grid; place-items: center; background: radial-gradient(circle at 50% 48%, rgba(6,10,24,.38) 0%, rgba(5,8,20,.78) 100%); backdrop-filter: blur(4px); transition: opacity .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1); cursor: pointer; }
+  #cinemaGate.out { opacity: 0; transform: scale(1.03); pointer-events: none; }
+  .gate-card { text-align: center; padding: 42px 48px 36px; max-width: 620px; margin: 20px; border-radius: 22px; border: 1px solid rgba(61,232,212,.32); background: rgba(6,11,28,.82); box-shadow: 0 28px 80px rgba(0,0,0,.65), 0 0 60px rgba(43,92,255,.16); backdrop-filter: blur(16px); }
+  .gate-kicker { font: 600 12px/1.4 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 4px; color: #3DE8D4; margin: 0 0 16px; }
+  .gate-title { font: 800 clamp(40px, 6vw, 68px)/1.02 "Syne", Inter, sans-serif; letter-spacing: -1.5px; color: #EEF3FA; margin: 0 0 14px; }
+  .gate-title span { color: #3DE8D4; text-shadow: 0 0 32px rgba(61,232,212,.35); }
+  .gate-sub { font: 400 17px/1.55 Inter, system-ui, sans-serif; color: #A9B8D6; margin: 0 auto 28px; max-width: 44ch; }
+  .gate-enter { display: inline-flex; align-items: center; gap: 12px; padding: 16px 34px; border-radius: 999px; border: 1px solid #3DE8D4; background: linear-gradient(135deg, rgba(61,232,212,.22), rgba(43,92,255,.28)); color: #EEF3FA; font: 700 14px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 2.5px; cursor: pointer; box-shadow: 0 0 34px rgba(61,232,212,.32); transition: transform .2s, background .2s, box-shadow .2s; }
+  .gate-enter:hover, .gate-enter:focus-visible { transform: translateY(-2px) scale(1.02); background: linear-gradient(135deg, rgba(61,232,212,.36), rgba(43,92,255,.42)); box-shadow: 0 0 46px rgba(61,232,212,.5); outline: none; }
+  .gate-mute { display: block; margin: 18px auto 0; background: none; border: 0; color: #6B7CA6; font: 500 12px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 2px; cursor: pointer; padding: 6px 12px; transition: color .2s; }
+  .gate-mute:hover { color: #EEF3FA; }
   body.idle #fs, body.idle #autoBtn, body.idle #snd:not(.locked) { opacity: 0; pointer-events: none; }
   :fullscreen #fs { opacity: 0; }
   #nogl { position: fixed; inset: 0; display: none; place-content: center; background: #060A18; color: #EEF3FA; font: 18px Inter, sans-serif; text-align: center; padding: 40px; }
@@ -71,6 +82,15 @@
   <div id="toast"></div>
 </div>
 <div id="hud" hidden><i></i></div>
+<div id="cinemaGate" hidden role="dialog" aria-modal="true" aria-label="Start presentation with sound">
+  <div class="gate-card">
+    <p class="gate-kicker">TRANSMISSION 001 // NURSING CITIZEN DEVELOPMENT</p>
+    <h1 class="gate-title">The <span>Arrival</span></h1>
+    <p class="gate-sub">The future of nursing won’t be adopted. It will be built — by nurses, at a scale no one has planned for.</p>
+    <button id="gateEnterBtn" class="gate-enter" type="button">▶  ENTER BRIEFING · SOUND ON</button>
+    <button id="gateMuteBtn" class="gate-mute" type="button">OR CONTINUE MUTED</button>
+  </div>
+</div>
 <button id="soundPrompt" type="button" hidden>▶  TAP ANYWHERE TO UNMUTE SOUNDTRACK</button>
 <button id="autoBtn" type="button" aria-label="Toggle autoplay" title="Autoplay on / off (P)">▶ AUTO</button>
 <button id="snd" type="button" aria-label="Toggle sound" title="Sound on / off (M)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path class="snd-waves" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="snd-mute" d="M22 9l-6 6M16 9l6 6" style="display:none"/></svg></button>
@@ -6609,7 +6629,7 @@ var on = new LbsSoundController, Ke = null, nt = null, queuedAdvance = !1;
 var $s = !Pi.has("manual"), O0 = { t0: performance.now() }, Xn = () => (performance.now() - O0.t0) / 1e3;
 vn.sound = on;
 
-var SndBtn = document.getElementById("snd"), AutoBtn = document.getElementById("autoBtn"), SndPrompt = document.getElementById("soundPrompt"), sndBooted = !1, unlockedThisClick = !1;
+var SndBtn = document.getElementById("snd"), AutoBtn = document.getElementById("autoBtn"), SndPrompt = document.getElementById("soundPrompt"), CinemaGate = document.getElementById("cinemaGate"), GateEnterBtn = document.getElementById("gateEnterBtn"), GateMuteBtn = document.getElementById("gateMuteBtn"), sndBooted = !1, unlockedThisClick = !1, gateWaiting = !1, launchFromGate = null;
 function syncAutoBtn() {
   if (!AutoBtn) return;
   AutoBtn.textContent = $s ? "▶ AUTO" : "❚❚ PAUSED";
@@ -6626,7 +6646,8 @@ function syncSndBtn() {
     i && (i.style.display = n ? "none" : "");
     SndBtn.title = n ? (e ? "Sound on (M to mute)" : "Click to enable sound (M)") : "Sound muted (M to unmute)";
   }
-  SndPrompt && (SndPrompt.hidden = !sndBooted || Zs || !n || e);
+  if (gateWaiting && e && launchFromGate) { launchFromGate(!1); return; }
+  SndPrompt && (SndPrompt.hidden = gateWaiting || !sndBooted || Zs || !n || e);
 }
 on.onStateChange = syncSndBtn;
 on.autoStart();
@@ -6851,6 +6872,25 @@ function _o() {
     nt.elapsed = su !== null ? (n - nt.start) : (nt.elapsed + dtFrame * nt.speed);
     if (nt.elapsed / nt.dur >= 1 || !nt.from) finishTransition();
   }
+  if (gateWaiting && Ke) {
+    // Keep the 3D globe spinning live behind the Smart Cinema Gate while holding slide time at pre-roll!
+    Ke.start = n + 10;
+    Ke.stepAt[0] = Ke.start;
+    let e = po[0], r = Ke.scene;
+    r.update && r.update({ t: n, step: 0, since: () => -1 });
+    wh(r.scene, n);
+    U0({ ...Ke, start: n - 4 }, n);
+    Rt.setRenderTarget(e.sceneRT); Rt.setClearColor(0, 1); Rt.clear();
+    r.camera.layers.set(0); Rt.render(r.scene, r.camera);
+    Rt.setRenderTarget(e.textRT); Rt.setClearColor(0, 0); Rt.clear();
+    let c = Ol.uniforms;
+    c.tScene.value = e.sceneRT.texture; c.tText.value = e.textRT.texture;
+    c.uTime.value = n; c.uBg0.value.set("#060A18"); c.uBg1.value.set("#0F1A3A");
+    c.uBloom.value = 1; c.uVig.value = 1; c.uFade.value = 1; c.uBlack.value = 0;
+    Rt.setRenderTarget(null); Rt.render(C0.scene, Qh);
+    Zs || requestAnimationFrame(_o);
+    return;
+  }
   Zs || B0(n);
   let activeForAudio = nt ? nt.to : Ke;
   on.frameUpdate(dtFrame, activeForAudio, n);
@@ -6917,15 +6957,68 @@ var fo = window.__loader || { progress() {}, ready() {}, done: Promise.resolve()
   }
   Ke = qs(e, Xn()); _o(); fo.ready();
   await fo.done;
-  prevFrameTime = Xn();
-  Ke = qs(e, prevFrameTime);
   on.autoStart();
-  tu(Ke);
-  on.frameUpdate(0.016, Ke, prevFrameTime);
-  syncSndBtn();
-  Li.hidden = !1;
-  $s || Li.classList.add("paused");
-  Ks($s ? "▶  Playing  ·  P pause  ·  → next  ·  M sound  ·  N notes  ·  F full screen" : "→ next  ·  P autoplay  ·  M sound  ·  N notes", 4500);
+  // Give browser 120ms to resolve AudioContext.resume() if autoplay is permitted (iframe allow="autoplay", MEI, or site setting)
+  await new Promise(r => setTimeout(r, 120));
+  let startPresentation = (startMuted = !1) => {
+    if (!gateWaiting && Ke && Ke._started) return;
+    gateWaiting = !1;
+    if (CinemaGate && !CinemaGate.hidden) {
+      CinemaGate.classList.add("out");
+      setTimeout(() => { CinemaGate.hidden = !0; }, 500);
+    }
+    if (startMuted) on.setMuted(!0);
+    else on.unlock();
+    prevFrameTime = Xn();
+    Ke = qs(e, prevFrameTime);
+    Ke._started = !0;
+    I0.style.width = "0%";
+    tu(Ke);
+    on.frameUpdate(0.016, Ke, prevFrameTime);
+    syncSndBtn();
+    Li.hidden = !1;
+    $s || Li.classList.add("paused");
+    Ks($s ? "▶  Playing  ·  P pause  ·  → next  ·  M sound  ·  N notes  ·  F full screen" : "→ next  ·  P autoplay  ·  M sound  ·  N notes", 4500);
+  };
+  launchFromGate = startPresentation;
+
+  if (!on.on || on.getStatus().running || Pi.has("nosound")) {
+    // Browser allowed automatic sound! Start immediately at 0:00 with ZERO clicks!
+    startPresentation(!1);
+  } else {
+    // Cold browser tab blocked unmuted audio: hold at 0:00 over live 3D globe until single tap/key
+    gateWaiting = !0;
+    if (CinemaGate) {
+      CinemaGate.hidden = !1;
+      GateEnterBtn && GateEnterBtn.focus();
+      let onGateEnter = ev => {
+        if (ev) ev.stopPropagation();
+        if (!gateWaiting) return;
+        unlockedThisClick = !0;
+        setTimeout(() => { unlockedThisClick = !1; }, 260);
+        startPresentation(!1);
+      };
+      GateEnterBtn && GateEnterBtn.addEventListener("click", onGateEnter);
+      CinemaGate.addEventListener("click", ev => {
+        if (GateMuteBtn && GateMuteBtn.contains(ev.target)) return;
+        onGateEnter(ev);
+      });
+      GateMuteBtn && GateMuteBtn.addEventListener("click", ev => {
+        ev.stopPropagation();
+        if (!gateWaiting) return;
+        startPresentation(!0);
+      });
+      window.addEventListener("keydown", ev => {
+        if (!gateWaiting || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+        if ([" ", "Enter", "ArrowRight", "ArrowDown"].includes(ev.key)) {
+          ev.preventDefault();
+          onGateEnter(ev);
+        }
+      }, { capture: !0 });
+    } else {
+      startPresentation(!1);
+    }
+  }
   requestAnimationFrame(_o);
 })();
 })();

@@ -4815,30 +4815,31 @@ var oo = {
 
 /* ── Exact LBS Procedural Soundtrack & SFX Controller ── */
 var SCENE_AUDIO = [
-  { bed: "office",    beat: () => 2 },                                          // 0: The Arrival (3D Globe)
-  { bed: "aim",       beat: s => s.step >= 1 ? 2 : 0 },                         // 1: Century -> Built by them
-  { bed: "swarm",     beat: s => s.step >= 1 ? 3 : 1 },                         // 2: 29.8M Workforce
-  { bed: "dominoes",  beat: s => s.t > 1.9 ? 1 : 0 },                           // 3: Old vs New Physics
-  { bed: "tower",     beat: s => s.step >= 2 ? 2 : s.step >= 1 ? 1 : 0 },       // 4: Ladder of Agency
-  { bed: "loop",      beat: () => 1 },                                          // 5: Five Archetypes
-  { bed: "loop",      beat: () => 3 },                                          // 6: Agentic Nursing Orbit
-  { bed: "calendar",  beat: s => Math.min(3, Math.floor(s.t / 5.2)) },          // 7: A Tuesday in 2034
-  { bed: "tower",     beat: s => s.t > 2.2 ? 2 : 1 },                           // 8: Explosion Curve
+  { bed: "office",    beat: () => 2 },                                          // 0: The Arrival (3D Globe + lush pluck/marimba/strings)
+  { bed: "aim",       beat: s => s.step >= 1 ? 2 : 1 },                         // 1: Century -> Built by them
+  { bed: "swarm",     beat: s => s.step >= 1 ? 3 : 2 },                         // 2: 29.8M Workforce
+  { bed: "dominoes",  beat: () => 2 },                                          // 3: Old vs New Physics (immediate low+strings+dominoes)
+  { bed: "tower",     beat: s => s.step >= 2 ? 2 : 1 },                         // 4: Ladder of Agency
+  { bed: "loop",      beat: () => 2 },                                          // 5: Five Archetypes (4 interlocking voices)
+  { bed: "loop",      beat: () => 3 },                                          // 6: Agentic Nursing Orbit (phase canon)
+  { bed: "calendar",  beat: s => Math.min(3, 1 + Math.floor(s.t / 6)) },        // 7: A Tuesday in 2034
+  { bed: "tower",     beat: () => 2 },                                          // 8: Explosion Curve
   { bed: "futures",   beat: () => 2 },                                          // 9: Nursing Commons
-  { bed: "lamp",      beat: s => s.step >= 1 ? 1 : 0 },                         // 10: 3 a.m. Instinct
+  { bed: "lamp",      beat: s => s.step >= 1 ? 2 : 1 },                         // 10: 3 a.m. Instinct
   { bed: "selectall", beat: s => s.step >= 1 ? 2 : 1 },                         // 11: Who Holds the Power?
   { bed: "boat",      beat: () => 2 },                                          // 12: Professional Sovereignty (Cathedral release!)
   { bed: "aim",       beat: () => 2 },                                          // 13: Guardian Duty
   { bed: "pile",      beat: () => 0 },                                          // 14: Nurse Education Rewired
-  { bed: "selectall", beat: () => 0 },                                          // 15: Seven Moves for 2026
-  { bed: "lamp",      beat: s => s.step >= 1 ? 2 : 0 },                         // 16: You Are the Beginning (16-voice sunrise!)
-  { bed: "questions", beat: () => 2 }                                           // 17: Finale
+  { bed: "loop",      beat: () => 2 },                                          // 15: Seven Moves for 2026
+  { bed: "lamp",      beat: s => s.step >= 1 ? 2 : 1 },                         // 16: You Are the Beginning (16-voice sunrise!)
+  { bed: "boat",      beat: () => 2 }                                           // 17: Finale (Cathedral release + warp SFX)
 ];
 
 var sharedLbsBank = createLbsAudio.makeBank();
 window.__lbsBank = sharedLbsBank;
-// Priority queue core hits & impulse responses first so they're ready immediately
-["ir.room", "ir.hall", "hit.select.0", "hit.type.0", "hit.tick.0", "hit.click.0", "pad.room", "pad.hum", "pad.warm", "pad.strings", "ins.pluck.8", "ins.pluck.16", "ins.marimba.8"].forEach(k => sharedLbsBank.need(k));
+// Pre-bake core percussion, plucks, marimba & key hits synchronously (~25ms) so frame-1 audio is 100% rich
+["hit.select.0", "hit.type.0", "hit.type.1", "hit.tick.0", "hit.click.0", "hit.rise.0", "hit.shimmer.0", "ins.pluck.8", "ins.pluck.16", "ins.marimba.4", "ins.marimba.8"].forEach(k => { try { sharedLbsBank.sync(k); } catch {} });
+["ir.room", "ir.hall", "pad.room", "pad.hum", "pad.warm", "pad.strings", "pad.oo", "pad.low", "pad.choir", "pad.glass"].forEach(k => sharedLbsBank.need(k));
 
 var LbsSoundController = class {
   constructor() {
@@ -4947,6 +4948,7 @@ var LbsSoundController = class {
     this.slideIdx = idx;
     this._clearFinale();
     this.slideState = {
+      introKick: false,
       selFired: false,
       consoleChars: 0,
       consoleLines: 0,
@@ -4960,6 +4962,24 @@ var LbsSoundController = class {
     };
     this.autoStart();
     if (idx === 9) this.param("mix", 0.85);
+  }
+  _kickBedIfNeeded(idx, stepNum) {
+    if (!this.isReady() || !this.lbs || !this.lbs._.bed) return;
+    let bed = this.lbs._.bed, E = this.lbs._.E;
+    if (idx === 0 && bed.id === "office" && !this.slideState.introKick) {
+      this.slideState.introKick = true;
+      bed.sel = 8;
+      bed.lastFig = 0;
+      bed.figure && bed.figure(E.now + 0.05);
+      this.hit("rise", { gain: 0.72 });
+    } else if (idx === 3 && bed.id === "dominoes" && !this.slideState.introKick) {
+      this.slideState.introKick = true;
+      bed.next = Math.min(bed.next || E.now, E.now + 0.12);
+    } else if (idx === 16 && bed.id === "lamp" && stepNum >= 1 && !this.slideState.sunriseBoosted) {
+      this.slideState.sunriseBoosted = true;
+      bed.sT = E.now - 2.4;
+      bed.gl = E.now + 1.1;
+    }
   }
   transition(name, fromIdx, toIdx, dur, reverse = false) {
     if (!this.isReady()) return;
@@ -4997,6 +5017,7 @@ var LbsSoundController = class {
     let cfg = SCENE_AUDIO[activeSlide.i] || SCENE_AUDIO[0];
     let beat = cfg.beat(s);
     this.lbs.update(dt, { scene: cfg.bed, beat });
+    this._kickBedIfNeeded(activeSlide.i, s.step);
     if (activeSlide.i === 8 && activeSlide.scene && activeSlide.scene.draw > 0 && activeSlide.scene.draw < 0.995) {
       this.lbs.param("speed", activeSlide.scene.draw * 0.55);
     }
@@ -5008,10 +5029,21 @@ var LbsSoundController = class {
     if (!this.isReady() || t < 0 || e !== this.slideIdx) return;
     let r = this.slideState;
     if (e === 0) {
-      // Slide 1: CAD SelectBox locks around "Arrival" -> triggers Y1 office pluck+marimba cascade!
+      // Slide 1: crisp type/tick cues on "TRANSMISSION 001", "The", "Arrival" + CAD SelectBox lock!
+      let w = Math.min(2, Math.floor((t - 0.25) / 0.28));
+      if (t >= 0.25 && w > r.wordIdx) {
+        r.wordIdx = w;
+        this.hit(w === 0 ? "tick" : "type", { gain: 0.78, pan: -0.25 + w * 0.15 });
+      }
       if (t >= 1.15 && !r.selFired) {
         r.selFired = true;
-        this.hit("select", { gain: 0.95 });
+        this.hit("select", { gain: 0.98 });
+      }
+    } else if (e === 1) {
+      let w = Math.min(6, Math.floor((t - 0.35) / 0.12));
+      if (t >= 0.35 && w > r.wordIdx) {
+        r.wordIdx = w;
+        this.hit("type", { gain: 0.65, pan: -0.3 + w * 0.1 });
       }
     } else if (e === 2) {
       // Slide 3: 3 stat cards drop in
@@ -5110,8 +5142,8 @@ var LbsSoundController = class {
       if (delayMs < -60) return;
       this.finaleTimers.push(setTimeout(() => { if (this.slideIdx === 17 && this.isReady()) fn(); }, Math.max(0, delayMs)));
     };
-    schedule(0.65, () => this.hit("riser", { gain: 1.05 }));
-    schedule(3.2, () => {
+    schedule(0.35, () => this.hit("riser", { gain: 1.05 }));
+    schedule(2.7, () => {
       this.hit("slam", { gain: 1.2 });
       this.hit("boom", { gain: 1.0 });
       this.hit("sub", { gain: 0.95 });
@@ -5119,14 +5151,14 @@ var LbsSoundController = class {
     let title = "NURSING CITIZEN DEVELOPMENT";
     for (let i = 0; i < title.length; i++) {
       if (title[i] === " ") continue;
-      let at = 3.9 + i * 0.065, pan = -0.4 + (i / title.length) * 0.8;
+      let at = 3.25 + i * 0.06, pan = -0.4 + (i / title.length) * 0.8;
       schedule(at, () => this.hit("type", { gain: 0.82, pan, pitch: 0.96 + (i % 5) * 0.02 }));
     }
-    schedule(6.3, () => {
+    schedule(5.4, () => {
       this.hit("shimmer", { gain: 1.0 });
-      this.hit("bell", { gain: 0.75 });
+      this.hit("bell", { gain: 0.78 });
     });
-    schedule(7.4, () => this.hit("select", { gain: 1.0 }));
+    schedule(6.35, () => this.hit("select", { gain: 1.0 }));
   }
 };
 
@@ -5626,6 +5658,7 @@ function Uh() {
   let o = {
     scene: n, camera: e, lit: 0, typedChars: 0, typedLines: 0,
     update(a) {
+      if (a.t < 0.8) { o.lit = 0; o.typedChars = 0; o.typedLines = 0; }
       let l = o.lit; l > lastLit && (lastLit = l, pulseAt = a.t); l < lastLit && (lastLit = l, pulseAt = -10);
       let dtP = a.t - pulseAt;
       ripple.material.uniforms.uR.value = dtP >= 0 && dtP < 2.2 ? dtP * .58 : 0;
@@ -5752,8 +5785,8 @@ function Wh() {
     }
   };
 }
-var Cl = 22;
-function S0(n) { return n < 3.2 ? 4 + 300 * Math.pow(n / 3.2, 3) : 3 + 120 * Math.exp(-(n - 3.2) * 2.5); }
+var Cl = 12.8;
+function S0(n) { return n < 2.7 ? 4 + 300 * Math.pow(n / 2.7, 3) : 3 + 120 * Math.exp(-(n - 2.7) * 2.5); }
 function Xh() {
   let n = new ut, e = qt(60), t = 2e3, i = sn(18), s = [];
   for (let u = 0; u < t; u++) { let p = i() * Math.PI * 2, g = .6 + Math.pow(i(), .7) * 40, w = i(); s.push({ x: Math.cos(p) * g, y: Math.sin(p) * g, z: -i() * 300, c: w < .22 ? We : w < .34 ? dt : w < .44 ? Gd : _s }); }
@@ -5761,9 +5794,9 @@ function Xh() {
   a.setAttribute("position", new St(r, 3)); a.setAttribute("color", new St(o, 3));
   let l = new mn(a, new bn({ vertexColors: !0, transparent: !0, blending: At, depthTest: !1 })); l.frustumCulled = !1; n.add(l);
   let c = nn(_s, 1, 0); c.position.set(0, 0, -5); n.add(c);
-  let h = lo("uniform float uR,uA; varying vec2 vUv; void main(){ float r=length(vUv-.5)*2.; float a=exp(-pow((r-uR)*18.,2.))*uA; gl_FragColor=vec4(vec3(.6,1.,.95)*a,1.); }", { uR: { value: 0 }, uA: { value: 0 } }, { w: 12, h: 12, x: 0, y: 0, z: -5 });
-  let h2 = lo("uniform float uR,uA; varying vec2 vUv; void main(){ float r=length(vUv-.5)*2.; float a=exp(-pow((r-uR)*14.,2.))*uA; gl_FragColor=vec4(vec3(1.,.85,.56)*a*.75,1.); }", { uR: { value: 0 }, uA: { value: 0 } }, { w: 13, h: 13, x: 0, y: 0, z: -5.2 });
-  let flare = lo("uniform float uA; varying vec2 vUv; void main(){ vec2 p=vUv-.5; float streak=exp(-abs(p.y)*36.)*exp(-abs(p.x)*3.8); float core=exp(-dot(p,p)*55.); gl_FragColor=vec4(mix(vec3(.24,.91,.83),vec3(1.,.9,.68),.5)*(streak*.9+core*.7)*uA,1.); }", { uA: { value: 0 } }, { w: 14, h: 6, x: 0, y: 0, z: -4.8 });
+  let h = lo("uniform float uR,uA; varying vec2 vUv; void main(){ float r=length(vUv-.5)*2.; float a=exp(-pow((r-uR)*18.,2.))*uA*smoothstep(1.,.78,r); gl_FragColor=vec4(vec3(.6,1.,.95)*a,1.); }", { uR: { value: 0 }, uA: { value: 0 } }, { w: 12, h: 12, x: 0, y: 0, z: -5 });
+  let h2 = lo("uniform float uR,uA; varying vec2 vUv; void main(){ float r=length(vUv-.5)*2.; float a=exp(-pow((r-uR)*14.,2.))*uA*smoothstep(1.,.78,r); gl_FragColor=vec4(vec3(1.,.85,.56)*a*.75,1.); }", { uR: { value: 0 }, uA: { value: 0 } }, { w: 13, h: 13, x: 0, y: 0, z: -5.2 });
+  let flare = lo("uniform float uA; varying vec2 vUv; void main(){ vec2 p=vUv-.5; float streak=exp(-abs(p.y)*36.)*exp(-abs(p.x)*3.8); float core=exp(-dot(p,p)*55.); float edge=smoothstep(.5,.36,max(abs(p.x),abs(p.y))); gl_FragColor=vec4(mix(vec3(.24,.91,.83),vec3(1.,.9,.68),.5)*(streak*.9+core*.7)*uA*edge,1.); }", { uA: { value: 0 } }, { w: 14, h: 6, x: 0, y: 0, z: -4.8 });
   n.add(h, h2, flare);
   let d = 0;
   return {
@@ -5772,8 +5805,8 @@ function Xh() {
       let _ = S0(p), m = Math.min(60, _ * .06);
       for (let b = 0; b < t; b++) { let S = s[b]; S.z += _ * g; S.z > 0 && (S.z -= 300); let M = Math.min(1, (S.z + 300) / 200); r.set([S.x, S.y, S.z, S.x, S.y, S.z - m - .05], b * 6); o.set([S.c.r * M, S.c.g * M, S.c.b * M, 0, 0, 0], b * 6); }
       a.attributes.position.needsUpdate = !0; a.attributes.color.needsUpdate = !0;
-      let f = p - 3.2, gl = p - 6.3;
-      c.material.opacity = f > 0 ? Math.exp(-f * 3.5) * .55 : Math.max(0, (p - 2.6) / .6) * .22;
+      let f = p - 2.7, gl = p - 5.4;
+      c.material.opacity = f > 0 ? Math.exp(-f * 3.5) * .55 : Math.max(0, (p - 2.1) / .6) * .22;
       c.scale.setScalar(f > 0 ? 14 + f * 16 : 2 + p);
       h.material.uniforms.uR.value = f > 0 ? Math.min(1.25, f * .9) : 0; h.material.uniforms.uA.value = f > 0 ? Math.exp(-f * 1.6) : 0;
       h2.material.uniforms.uR.value = f > .14 ? Math.min(1.3, (f - .14) * .75) : 0; h2.material.uniforms.uA.value = f > .14 ? Math.exp(-(f - .14) * 1.4) : 0;
@@ -6254,18 +6287,18 @@ var Zt = [
   },
   {
     scene: Xh, transition: "daybreak", live: !0, bloom: 1.3,
-    notes: "The closing title card. A 3D warp into the stars, an impact, then NURSING CITIZEN DEVELOPMENT flies in letter by letter, a light glint crosses it and the line “The future is built by nurses” appears. It replays every 22 seconds. The soundtrack is synthesised live in the browser — press M to switch it on or off.",
+    notes: "The closing title card. A 3D warp into the stars, an impact, then NURSING CITIZEN DEVELOPMENT flies in letter by letter, a light glint crosses it and the line “The future is built by nurses” appears — then automatically loops back to Slide 1. The soundtrack is synthesised live in the browser — press M to switch it on or off.",
     onEnter({ sound: n, offset: e = 0 }) { vn.sound = n; vn.loop = -1; n.finale(e); },
     draw(n, { t: e }) {
       let t = Cl, i = (e % t + t) % t, s = Math.floor(e / t);
       vn.sound && vn.loop !== void 0 && s > 0 && s !== vn.loop && (vn.loop = s, vn.sound.finale(0));
       vn.loop === -1 && s === 0 && (vn.loop = 0);
-      let r = 1 - vs((i - 19.5) / 1.8);
+      let r = 1 - vs((i - 10.9) / 1.5);
       n.save(); n.globalAlpha = r;
-      let o = vs((i - .4) / .6) * (1 - vs((i - 2.3) / .5));
+      let o = vs((i - .3) / .5) * (1 - vs((i - 1.9) / .45));
       if (o > 0) {
         n.save(); n.globalAlpha *= o; Ue(n, 600, 21, Ce.mono);
-        n.letterSpacing = `${(11 + (1 - bt.out4((i - .4) / .8)) * 8).toFixed(1)}px`;
+        n.letterSpacing = `${(11 + (1 - bt.out4((i - .3) / .7)) * 8).toFixed(1)}px`;
         n.textAlign = "center"; n.fillStyle = V.ink; n.fillText("THE NURSING PROFESSION PRESENTS", 960, 548); n.restore();
       }
       let a = "NURSING CITIZEN DEVELOPMENT";
@@ -6273,7 +6306,7 @@ var Zt = [
       let l = 7, c = [...a].map(_ => n.measureText(_).width + l), h = c.reduce((_, m) => _ + m, 0) - l, d = 960 - h / 2, u = 560;
       n.save();
       for (let _ = 0; _ < a.length; _++) {
-        let m = a[_], f = c[_], raw = Ct((i - 3.9 - _ * .065) / .52);
+        let m = a[_], f = c[_], raw = Ct((i - 3.25 - _ * .06) / .48);
         if (raw > 0 && m !== " ") {
           let sp = bt.outBack(raw, 1.85), b = bt.out2(raw * 1.6);
           let S = 1 + (1 - sp) * 1.4, tilt = (hashDet(_) - .5) * .35 * (1 - bt.out4(raw));
@@ -6286,7 +6319,7 @@ var Zt = [
         d += f;
       }
       n.restore();
-      let p = (i - 6.3) / .9;
+      let p = (i - 5.4) / .85;
       if (p > 0 && p < 1) {
         n.save(); n.globalCompositeOperation = "source-atop";
         let _ = 960 - h / 2 - 200 + p * (h + 400), m = n.createLinearGradient(_ - 120, 0, _ + 120, 0);
@@ -6294,15 +6327,15 @@ var Zt = [
         n.fillStyle = m; n.fillRect(_ - 120, u - 70, 240, 90); n.restore();
       }
       n.letterSpacing = "0px";
-      let g = bt.out4((i - 7.4) / 1.1);
+      let g = bt.out4((i - 6.35) / 1.0);
       if (g > 0) {
         n.save(); n.globalAlpha *= g; Ue(n, 500, 36, Ce.body); n.letterSpacing = "1px";
         ft(n, "The future is built *by nurses*", 960, 660 + (1 - g) * 24, 1600, 40, V.dim, "center"); n.restore();
-        drawSelectBox(n, 960 - h / 2 - 26, u - 68, h + 52, 92, (i - 7.45) / .55, { color: V.select, knob: true, time: e });
+        drawSelectBox(n, 960 - h / 2 - 26, u - 68, h + 52, 92, (i - 6.4) / .52, { color: V.select, knob: true, time: e });
       }
       n.restore();
       n.textAlign = "left"; Ue(n, 500, 13, Ce.mono); n.letterSpacing = "3px"; n.fillStyle = V.mute; n.textAlign = "center";
-      n.fillText(`SOUND ${vn.sound && vn.sound.on ? "ON" : "OFF"}  ·  PRESS M`, 960, 1040); n.textAlign = "left"; n.letterSpacing = "0px";
+      n.fillText(`SOUND ${vn.sound && vn.sound.on ? "ON" : "OFF"}  ·  AUTO-REPEATING  ·  PRESS M`, 960, 1040); n.textAlign = "left"; n.letterSpacing = "0px";
     }
   }
 ];
@@ -6325,7 +6358,7 @@ var w0 = [
   { auto: { dur: 11.5 }, cam: { from: { pitch: 34, ped: 2.6, dolly: 4 }, drift: { pitch: -2, dolly: -.45 }, enter: 3.2 } },
   { auto: { dur: 13 }, cam: { from: { dolly: 10, pitch: -10 }, drift: { dolly: -.6, pitch: 2 }, enter: 3.2 } },
   { auto: { dur: 11, steps: [5.0] }, cam: { from: { dolly: -3, pitch: 6 }, drift: { dolly: .7 }, sway: .6, enter: 3.2 } },
-  { auto: { dur: 22 }, cam: !1, motes: !1 }
+  { auto: { dur: 12.8 }, cam: !1, motes: !1 }
 ];
 Zt.forEach((n, e) => Object.assign(n, w0[e]));
 
@@ -6600,12 +6633,13 @@ on.autoStart();
 syncSndBtn();
 syncAutoBtn();
 {
-  let autoTries = 0, autoTimer = setInterval(() => {
-    on.autoStart(); syncSndBtn();
-    (++autoTries >= 24 || on.getStatus().running) && clearInterval(autoTimer);
-  }, 250);
+  setInterval(() => {
+    if (!Zs && on.on && !document.hidden && !on.getStatus().running) {
+      on.autoStart(); syncSndBtn();
+    }
+  }, 320);
 }
-setTimeout(() => { sndBooted = !0; on.autoStart(); syncSndBtn(); }, 600);
+setTimeout(() => { sndBooted = !0; on.autoStart(); syncSndBtn(); }, 450);
 window.addEventListener("focus", () => on.autoStart(), { passive: !0 });
 window.addEventListener("pageshow", () => on.autoStart(), { passive: !0 });
 document.addEventListener("visibilitychange", () => { on.setHidden(document.hidden); !document.hidden && on.autoStart(); });
@@ -6634,7 +6668,7 @@ function unlockAllSound(n) {
     on.ctx.state === "running" ? afterResume() : on.ctx.resume().then(afterResume).catch(() => {});
   }
 }
-["pointerdown", "mousedown", "mouseup", "touchstart", "touchend", "wheel", "click", "keydown"].forEach(n => window.addEventListener(n, unlockAllSound, { capture: !0, passive: !0 }));
+["pointerdown", "pointerup", "mousedown", "mouseup", "touchstart", "touchend", "click", "dblclick", "keydown", "keyup"].forEach(n => window.addEventListener(n, unlockAllSound, { capture: !0, passive: !0 }));
 SndPrompt && SndPrompt.addEventListener("click", n => { n.stopPropagation(); unlockAllSound(); });
 AutoBtn && AutoBtn.addEventListener("click", n => { n.stopPropagation(); z0(!$s); });
 
@@ -6657,7 +6691,8 @@ function toggleSound() {
 SndBtn && SndBtn.addEventListener("click", n => { n.stopPropagation(); toggleSound(); });
 
 function tu(n) {
-  history.replaceState(null, "", `#${n.i + 1}`);
+  if (!$s) history.replaceState(null, "", `#${n.i + 1}`);
+  else if (location.hash) history.replaceState(null, "", location.pathname + location.search);
   k0();
   on.stop();
   on.enterSlide(n.i);
